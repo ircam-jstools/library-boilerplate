@@ -1,6 +1,6 @@
 {
   "name": "library-boilerplate",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "project starter for libraries",
   "main": "dist/index.js",
   "author": "Benjamin Matuszewski",
