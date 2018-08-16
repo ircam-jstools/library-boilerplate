@@ -42,6 +42,35 @@ const browserifyOptions = {
  * High-Level logic
  * -------------------------------------------------------------------------- */
 
+ const transpileFile = (file, distDirectory, babelOptions) => {
+  return fileStore.get(file.abs.replace(srcRegExp, distDirectory))
+    .then(dist => {
+      const startTime = new Date().getTime();
+
+      return transpiler.transpile(file, dist, babelOptions)
+        .then(([file, dist]) => {
+          const dt = new Date().getTime() - startTime;
+          return log.transpileSuccess(file, dist, dt);
+        })
+        .catch(err => log.transpileError(file, err));
+    });
+};
+
+function __transpile(srcDirectory, distDirectory, babelOptions) {
+  return fileStore.getAll(srcDirectory)
+    .then(sources => { // 1. transpile all js files (if json, just copy)
+      return sources.reduce((promise, src) => {
+        return promise.then(all => {
+          return transpileFile(src, distDirectory, babelOptions).then(pair => {
+            all.push(pair);
+            return all;
+          });
+        }).catch(err => {});
+      }, Promise.resolve([]));
+    })
+    .catch(err => {});
+}
+
 // watch
 function __watch(srcDirectory, distDirectory, watchOptions, babelOptions) {
 
@@ -49,16 +78,8 @@ function __watch(srcDirectory, distDirectory, watchOptions, babelOptions) {
     const startTime = new Date().getTime();
     const distFilename = filename.replace(srcRegExp, distDirectory);
 
-    Promise
-      .all([fileStore.get(filename), fileStore.get(distFilename)])
-      .then(([src, dist]) => {
-        transpiler.transpile(src, dist, babelOptions)
-          .then(([src, dist]) => {
-            const dt = new Date().getTime() - startTime;
-            return log.transpileSuccess(src, dist, dt);
-          })
-          .catch(err => log.transpileError(src, err));
-      })
+    fileStore.get(filename)
+      .then(src => transpileFile(src, distDirectory, babelOptions))
       .catch(err => console.error(err.stack))
   };
 
@@ -76,30 +97,6 @@ function __watch(srcDirectory, distDirectory, watchOptions, babelOptions) {
     monitor.on('created', processFile);
     monitor.on('changed', processFile);
     monitor.on('removed', deleteFile);
-  });
-}
-
-function __transpile(srcDirectory, distDirectory, babelOptions) {
-  return new Promise((resolve, reject) => {
-    fileStore.getAll(srcDirectory)
-      .then(files => {
-        const promises = files.map(src => {
-          const startTime = new Date().getTime();
-          const distFilename = src.abs.replace(srcRegExp, distDirectory);
-
-          return fileStore.get(distFilename)
-            .then(dist => transpiler.transpile(src, dist, babelOptions))
-            .then(([src, dist]) => {
-              const dt = new Date().getTime() - startTime;
-              return log.transpileSuccess(src, dist, dt);
-            })
-            .catch(err => log.transpileError(src, err));
-        });
-
-        return Promise.all(promises);
-      })
-      .then(() => { return resolve(); })
-      .catch(err => console.error(err.stack));
   });
 }
 
