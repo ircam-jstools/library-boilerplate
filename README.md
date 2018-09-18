@@ -5,7 +5,7 @@
 ## Create a new project
 
 ```
-git clone depth=1 https://github.com/ircam-jstools/library-boilerplate my-library
+git clone --depth=1 https://github.com/ircam-jstools/library-boilerplate my-library
 cd my-library
 rm -Rf .git
 ```
@@ -34,7 +34,7 @@ npm run test
 npm run bundle
 ```
 
-> create `{my-library}.umd.js` and `{my-librarry}.min.js` file for usage
+> create `{my-library}.umd.js` and `{my-library}.min.js` file for usage
 > outside a modern build environment.
 > The global variable exposed in `window` is defined in the `standalone` entry 
 > of the `package.json`
