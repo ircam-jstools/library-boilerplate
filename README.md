@@ -1,11 +1,11 @@
-# library-boilerplate
+# `library-boilerplate`
 
 > project starter for libraries
 
 ## Create a new project
 
 ```
-git clone depth=1 https://github.com/ircam-jstools/library-boilerplate my-library
+git clone --depth=1 https://github.com/ircam-jstools/library-boilerplate my-library
 cd my-library
 rm -Rf .git
 ```
@@ -16,26 +16,26 @@ rm -Rf .git
 npm run transpile
 ```
 
-> transpile all files from `src` to `dist`
+> Transpile all files from `src` to `dist`
 
 ```
 npm run watch
 ```
 
-> watch files in `src` and transpile on save
+> Watch files in `src` and transpile on save
 
 ```
 npm run test
 ```
 
-> run all the tests in `tests`
+> Run all the tests in `tests`
 
 ```
 npm run doc
 ```
 
 > Create the documentation using `jsdoc`. The documentation is built in the 
-> `docs` directory. make sure to configure the github repository accordingly.
+> `docs` directory. Make sure to configure the github repository accordingly.
 
 ```
 npm run deploy
