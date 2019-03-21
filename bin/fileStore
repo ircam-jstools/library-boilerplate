@@ -1,14 +1,29 @@
 #!/usr/bin/env node
 const klaw = require('klaw')
 const path = require('path');
+const fse = require('fs-extra');
 
 const cwd = process.cwd();
 
 /**
- * return a file entity { abs, rel } from an absolute filename
+ * return a file entity { abs, rel } from an absolute or relative filename
  */
-const get = module.exports.get = abs => {
-  const rel = path.relative(cwd, abs);
+const get = module.exports.get = filename => {
+  if (filename.abs && filename.rel) {
+    return filename;
+  }
+
+  let abs;
+  let rel;
+
+  if (path.isAbsolute(filename)) {
+    abs = filename;
+    rel = path.relative(cwd, abs);
+  } else {
+    rel = filename;
+    abs = path.join(cwd, rel);
+  }
+
   const file = { abs, rel };
 
   return Promise.resolve(file);
@@ -17,8 +32,8 @@ const get = module.exports.get = abs => {
 /**
  * return a collection of file entities { abs, rel } from absolute dirname
  */
-const getAll = module.exports.getAll = dirname => {
-  const files = [];
+module.exports.getAll = dirname => {
+  const filenames = [];
 
   // @todo - clean that
   // filter function for klaw (__transpile)
@@ -30,31 +45,38 @@ const getAll = module.exports.getAll = dirname => {
   return new Promise((resolve, reject) => {
     klaw(dirname, { filter: klawFilter })
       .on('data', item => {
-        if (item.stats.isFile())
-          files.push(item.path);
+        if (item.stats.isFile()) {
+          filenames.push(item.path);
+        }
       })
+      .on('error', err => reject(err))
       .on('end', () => {
-        const promises = files.map(file => get(file));
-        const promiseAll = Promise.all(promises);
-        resolve(promiseAll);
+        return Promise
+          .all(filenames.map(get))
+          .then(files => resolve(files));
       });
   });
 }
 
 /**
- *
+ * delete a file from file system
  */
-module.exports.delete = (file) => {
-  dictionnary.delete(file.abs);
-  return Promise.resolve(file);
-}
+module.exports.delete = function(file) {
+  return new Promise((resolve, reject) => {
+    fse.stat(file.abs, (err, stats) => {
+      if (err) {
+        if (err.code == 'ENOENT')
+          return resolve(file); // ignore if  doesn't exists
+        else
+          return reject(err);
+      }
 
-/**
- *
- */
-const filter = module.exports.filter = (file, regexp) => {
-  if (regexp.test(file.rel))
-    return Promise.reject(file);
-
-  return Promise.resolve(file);
-}
+      fse.remove(file.abs, err => {
+        if (err)
+          reject(err);
+        else
+          resolve(file);
+      });
+    });
+  });
+};

@@ -16,25 +16,23 @@
     "test": "babel-tape-runner tests/**.js",
     "transpile": "node ./bin/runner --transpile",
     "version": "npm run transpile && npm run doc && git add docs",
-    "prewatch": "npm run transpile",
     "watch": "node ./bin/runner --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@babel/runtime": "^7.4.0"
+  },
   "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
     "@ircam/jsdoc-template": "^1.0.2",
-    "babel-core": "^6.26.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-tape-runner": "^2.0.1",
-    "browserify": "^14.5.0",
+    "babel-tape-runner": "^3.0.0",
     "chalk": "^2.3.0",
-    "fs-extra": "^4.0.3",
+    "fs-extra": "^7.0.1",
     "jsdoc": "^3.5.5",
-    "klaw": "^2.1.1",
-    "np": "^2.18.2",
+    "klaw": "^3.0.0",
+    "np": "^4.0.2",
     "tape": "^4.8.0",
-    "uglify-js": "^3.2.2",
     "watch": "^1.0.2"
   }
 }
