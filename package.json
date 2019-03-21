@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "author": "Benjamin Matuszewski",
   "license": "BSD-3-Clause",
-  "standalone": "myLibrary",
   "publishConfig": {
     "access": "public"
   },

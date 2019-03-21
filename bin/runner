@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const pkg = require('../package.json');
 const watch = require('watch');
 const path = require('path');
 const fs = require('fs');
@@ -18,10 +17,6 @@ const srcDirectory = path.join(cwd, 'src');
 const srcRegExp = new RegExp('^' + srcDirectory);
 const distDirectory = path.join(cwd, 'dist');
 
-// bundle configuration
-const umdTarget = pkg.name + '.umd.js';
-const minTarget = pkg.name + '.min.js';
-
 const babelOptions = JSON.parse(fs.readFileSync(path.join(cwd, '.babelrc')));
 
 const watchOptions = {
@@ -34,7 +29,6 @@ const watchOptions = {
 const browserifyOptions = {
   debug: true,
   fullPaths: false,
-  standalone: pkg.standalone,
 };
 
 // --------------------------------------------------------------------------
