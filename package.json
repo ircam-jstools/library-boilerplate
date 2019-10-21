@@ -1,6 +1,6 @@
 {
   "name": "library-boilerplate",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "project starter for libraries",
   "main": "dist/index.js",
   "author": "Benjamin Matuszewski",
@@ -9,29 +9,28 @@
     "access": "public"
   },
   "scripts": {
-    "bundle": "node ./bin/runner --bundle",
-    "deploy": "np",
+    "clean": "rm -Rf client && rm -Rf server",
+    "deploy": "np --yolo",
     "doc": "jsdoc -c jsdoc.json",
-    "test": "babel-tape-runner tests/**.js",
-    "transpile": "node ./bin/runner --transpile",
-    "version": "npm run transpile && npm run doc && git add docs",
-    "watch": "node ./bin/runner --watch"
+    "version": "npm run clean && npm run transpile && npm run doc && git add docs",
+    "test": "babel-tape-runner tests/",
+    "transpile": "babel src --out-dir dist",
+    "watch": "npm run clean && npm run transpile && chokidar src -c \"npm run transpile\""
   },
   "dependencies": {
-    "@babel/runtime": "^7.4.0"
+    "@babel/runtime": "^7.6.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/plugin-transform-runtime": "^7.4.0",
-    "@babel/preset-env": "^7.4.1",
-    "@ircam/jsdoc-template": "^1.0.2",
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.6.0",
+    "@ircam/jsdoc-template": "^1.0.3",
     "babel-tape-runner": "^3.0.0",
-    "chalk": "^2.3.0",
-    "fs-extra": "^7.0.1",
-    "jsdoc": "^3.5.5",
-    "klaw": "^3.0.0",
-    "np": "^4.0.2",
-    "tape": "^4.8.0",
-    "watch": "^1.0.2"
+    "chokidar": "^3.2.2",
+    "chokidar-cli": "^2.0.0",
+    "concurrently": "^5.0.0",
+    "jsdoc": "^3.6.3",
+    "np": "^5.1.1",
+    "tape": "^4.11.0"
   }
 }
